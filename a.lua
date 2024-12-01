@@ -9,7 +9,14 @@ local WebserverSettings = {
 
 function WebserverSettings:SetPort(Port) self.Port = Port end
 function WebserverSettings:SetPassword(Password) self.Password = Password end
-
+function toAsciiEscapeSequence(text)
+    local result = ""
+    for i = 1, #text do
+        local char = text:sub(i, i)
+        result = result .. "\\" .. string.byte(char)
+    end
+    return result
+end
 local HttpService = game:GetService'HttpService'
 local Request = (syn and syn.request) or request or (http and http.request) or http_request
 
@@ -29,9 +36,8 @@ local function GET(Method, Account, ...)
     
     local Response = Request {
         Method = 'GET',
-        Url = Url
+        Url = toAsciiEscapeSequence(Url)
     }
-    setclipboard(Url)
 
     if Response.StatusCode ~= 200 then return false end
 
